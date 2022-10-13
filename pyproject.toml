@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "tailwind-class-prefixer"
+version = "0.1.0"
+description = ""
+authors = ["Dominik Geldmacher <dominik.geldmacher@saint-gobain.com>"]
+readme = "README.md"
+packages = [{include = "tailwind_class_prefixer"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+rich = "^12.6.0"
+typer = "^0.6.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
