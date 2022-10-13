@@ -40,7 +40,7 @@ def prefix(
         ),
     ):
     """Process an existing project."""
-    if not path.exists():
+    if path is None or not path.exists():
         log.error(f"Please provide a valid path to an existing vue project.")
         raise typer.Exit()
 

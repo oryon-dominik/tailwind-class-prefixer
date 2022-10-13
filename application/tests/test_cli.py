@@ -17,7 +17,8 @@ def test_version():
     assert f"{__application__}: {__version__}" in Text.from_ansi(result.stdout)
 
 def test_vue_conversion():
-    result = runner.invoke(cli, ["prefix", "./application/tests/mocks/"])
+    # random - prefix..
+    result = runner.invoke(cli, ["prefix", "./application/tests/mocks/", ""])
     assert result.exit_code == 0
 
     print(result.stdout)
