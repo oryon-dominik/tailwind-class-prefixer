@@ -1,12 +1,9 @@
-
-
-
 # auto prefix tailwind classes
 
 prefix handle default: "tw-"
 
 ## media Queries:
-    
+
     foobar:sm
     ->
     foobar:tw-sm
@@ -32,3 +29,8 @@ prefix handle default: "tw-"
     module.exports = {
     prefix: 'tw-',
     }
+
+
+## regexes for matching
+
+    https://pythex.org/
