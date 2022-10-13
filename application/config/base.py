@@ -36,4 +36,4 @@ class Settings:
     IGNORE_DIRECTORIES = [".git", "node_modules", "dist", "build", "public", "static"]
 
     TAILWIND_CLASSES_SRC_URL = "https://raw.githubusercontent.com/tailwindlabs/tailwindcss/master/tests/any-type.test.js"
-    TAILWIND_CLASSES_JSON_PATH = ROOT_DIR / "tailwind-classes-list.json"
+    TAILWIND_CLASSES_JSON_PATH = ROOT_DIR / "tailwind-classes" / "tailwind-classes-list.json"

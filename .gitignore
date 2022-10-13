@@ -1,4 +1,4 @@
 __pycache__
 .DS_Store
 logs/
-test-prefix
+tailwind-classes-list.json

@@ -29,8 +29,9 @@ def write_json_to_file(path: Path, content: dict | list) -> dict | list:
     """
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
-        with open(path, "r", encoding="utf-8") as f:
-            json.dump(content, f)
+        path.touch(exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(content, f, indent=4)
         return load_json_from_file(path)
     except FileNotFoundError as e:
         log.error(f"FileNotFoundError: {e}")

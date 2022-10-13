@@ -27,7 +27,8 @@ def _version_callback(value: bool) -> None:
 def update():
     """Update the tailwind class list from official sources."""
     from application.update import repository
-    repository.scrape()
+    classes = repository.scrape()
+    log.info(f"Tailwind classes scraped: {classes}")
 
 
 @cli.command()
