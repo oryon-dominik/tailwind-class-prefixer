@@ -6,8 +6,6 @@ from pathlib import Path
 from typing import Optional
 
 import typer
-from rich.console import Console
-
 
 from application import __application__, __version__
 
@@ -15,23 +13,22 @@ from application.config import settings
 from application.config.logs import logging
 
 log = logging.getLogger('application')
-console = Console()
-print = console.print
 cli = typer.Typer(no_args_is_help=True)
 
 
 def _version_callback(value: bool) -> None:
     """Print version."""
     if value:
-        print(f"{__application__}: {__version__}")
+        log.info(f"{__application__}: {__version__}")
         raise typer.Exit()
 
 
 @cli.command()
 def update():
     """Update the tailwind class list from official sources."""
-    # httpx.get and parse to list..
-    ...
+    from application.update import repository
+    repository.scrape()
+
 
 @cli.command()
 def prefix(
@@ -43,10 +40,11 @@ def prefix(
     ):
     """Process an existing project."""
     if not path.exists():
-        print(f"Please provide a valid path to an existing vue project.", style="red")
+        log.error(f"Please provide a valid path to an existing vue project.")
         raise typer.Exit()
     from application.parser import walk
     walk.tree(path)
+
 
 @cli.callback()
 def callback(
@@ -61,7 +59,7 @@ def callback(
     ) -> None:
     __file__.__doc__
     # This will run before all commands:
-    # print(f"Prefixing project with {settings.TAILWIND_DEFAULT_PREFIX}")
+    # log.info(f"Prefixing project with {settings.TAILWIND_DEFAULT_PREFIX}")
     return None
 
 

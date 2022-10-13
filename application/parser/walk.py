@@ -1,22 +1,27 @@
 from pathlib import Path
 from ..config import settings
+from ..inout import read
 from .. import exceptions
+
 
 def parse_file(file: Path):
     """Parse a file for tailwind classes."""
     if not file.is_file():
         raise exceptions.ShallNeverHappen(f"Path {file} is not a file.")
-
-    print(file.name)
-    # with open(file_path, "r") as f:
-    #     content = f.read()
-    #     for line in content.splitlines():
-    #         if line.startswith(settings.TAILWIND_DEFAULT_PREFIX):
-    #             print(line)
+    
+    match file.suffix:
+        case ".vue":
+            from . import vue
+            vue.parse(read(file))
+        case ".css":
+            from . import css
+            css.parse(read(file))
+        case _:
+            raise NotImplementedError(f"File {file} has an not implemented file extension.")
 
 
 def tree(path: Path) -> None:
-    """Print a directory tree."""
+    """Walk a directory tree (if not ignored) and parse all files if in allowed extensions."""
     if path.is_dir() and path.name in settings.IGNORE_DIRECTORIES:
         # skip
         pass
