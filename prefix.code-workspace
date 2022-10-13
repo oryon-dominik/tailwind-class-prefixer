@@ -1,0 +1,56 @@
+{
+    "folders": [
+        {
+            "name": "tailwind-class-prefixer",
+            "path": "."
+        },
+    ],
+
+    "settings": {
+        // * files ////////////////////////////////////////////////////////////
+        "files.autoSave": "onFocusChange",
+        "files.eol": "\n",
+        "files.exclude": {
+            "**/__pycache__": true,
+            "**/_pytest": true,
+            "**/*.egg-info": true,
+            "**/*.dist-info": true,
+            "**/.pytest_cache": true,
+            "**/.ipynb_checkpoints/": true,
+            "**/.ipython": true,
+            ".vscode/": true,
+            ".VSCodeCounter/": true,
+            "**/node_modules/": true,
+        },
+
+        // * python ///////////////////////////////////////////////////////////
+        // black-settings
+        "python.formatting.provider": "black",
+        "python.formatting.blackArgs": ["--line-length", "119"],
+        // testing-settings
+        "python.testing.cwd": "${workspaceFolder}/application/",
+        "python.testing.unittestEnabled": false,
+        "python.testing.nosetestsEnabled": false,
+        "python.testing.pytestEnabled": false,
+        // "python.testing.pytestArgs": [
+        // ],
+        "python.testing.autoTestDiscoverOnSaveEnabled": false,
+    },
+
+    "launch": {
+        "configurations": [
+            {
+                "name": "Python: Command Line Interface",
+                "type": "python",
+                "request": "launch",
+                "program": "prefix.py",
+                "args": [
+                    "prefix",
+                    "./test-prefix",
+                    "tw-",
+                ],
+            }
+        ],
+        "compounds": []
+    }
+}
