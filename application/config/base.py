@@ -33,7 +33,7 @@ class Settings:
 
     TAILWIND_DEFAULT_PREFIX = "tw-"
     ALLOWED_FILE_EXTENSIONS = [".vue", ".css"]
-    IGNORE_DIRECTORIES = [".git", "node_modules", "dist", "build", "public", "static"]
+    IGNORE_DIRECTORIES = [".git", "__pycache__", "node_modules", "dist", "build", "public", "static"]
 
     TAILWIND_CLASSES_SRC_URL = "https://raw.githubusercontent.com/tailwindlabs/tailwindcss/master/tests/any-type.test.js"
     TAILWIND_CLASSES_JSON_PATH = ROOT_DIR / "tailwind-classes" / "tailwind-classes-list.json"

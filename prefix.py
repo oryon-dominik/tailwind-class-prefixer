@@ -43,8 +43,9 @@ def prefix(
     if not path.exists():
         log.error(f"Please provide a valid path to an existing vue project.")
         raise typer.Exit()
+
     from application.parser import walk
-    walk.tree(path)
+    walk.search(path=path, prefix=prefix)
 
 
 @cli.callback()
