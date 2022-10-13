@@ -1,0 +1,2 @@
+class ShallNeverHappen(Exception):
+    pass
