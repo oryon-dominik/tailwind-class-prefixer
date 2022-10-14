@@ -37,9 +37,12 @@ def parse(path: Path, prefix: str) -> str:
     semicolon = get_semicolon_style(content)
 
     old_prefix = ''.join(r[0] for r in findall("prefix: {},\n", content)).strip(semicolon)
-    if old_prefix:
+    if old_prefix and prefix != old_prefix:
         log.info(f"Found old prefix: {old_prefix} - replacing..")
         new_content = re.sub(f"prefix: {semicolon}{old_prefix}{semicolon}", f"prefix: {semicolon}{prefix}{semicolon}", content)
+    elif prefix == old_prefix:
+        log.info(f"The old prefix is already: {old_prefix}, skipping..")
+        return old_prefix
     else:
         log.info(f"Adding prefix {prefix} to tailwind.config.js..")
         lines = content.splitlines()
