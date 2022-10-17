@@ -15,3 +15,4 @@ def parse(bytes: io.BytesIO, new_prefix: str, old_prefix: str):
         # TODO: handle the apply case that occurs in css files..
         # - replace these with        
         # re.sub(old_name, new_name)
+        
