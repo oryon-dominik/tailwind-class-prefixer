@@ -13,12 +13,25 @@ from .. import exceptions
 log = logging.getLogger("application")
 
 
-def get_tailwind_classes_list() -> list:
-    """Get a list of all tailwind classes."""
+def prefixes(prefix=str) -> list:
+    """
+    Return a list of all class-prefix combinations:
+        - That are non-prefixed
+        - or that are prefixed with the given prefix.
+    Also adding the '-' dash to class.
+    """
+    return [
+        f"{prefix}{klass}"
+        for prefix in list(set([prefix, ""]))
+        for klass in [f"{c}-" for c in classes()]
+    ]
+
+def classes() -> list:
+    """Read the list of all tailwind classes from json."""
     return json.load_json_from_file(path=settings.TAILWIND_CLASSES_JSON_PATH)
 
 
-def get_semicolon_style(content: str) -> str:
+def semicolon_style(content: str) -> str:
     """parse semicolon styles, because JavaScript is inconsistent -.-"""
     semicolon_style_double = '"' in content
     semicolon_style_single = "'" in content
@@ -34,7 +47,7 @@ def parse(path: Path, prefix: str) -> str:
     _bytes: io.BytesIO = read(path)
     content = _bytes.getvalue().decode("utf-8")
 
-    semicolon = get_semicolon_style(content)
+    semicolon = semicolon_style(content)
 
     old_prefix = ''.join(r[0] for r in findall("prefix: {},\n", content)).strip(semicolon)
     if old_prefix and prefix != old_prefix:

@@ -2,8 +2,9 @@ from pathlib import Path
 import logging
 
 from ..config import settings
-from ..inout import read
+from ..inout import read, write
 from .. import exceptions
+
 
 log = logging.getLogger("application")
 
@@ -16,7 +17,8 @@ def parse_file(file: Path, new_prefix: str, old_prefix: str) -> None:
     match file.suffix:
         case ".vue":
             from . import vue
-            vue.parse(bytes=read(file), new_prefix=new_prefix, old_prefix=old_prefix)
+            content: str = vue.parse(bytes=read(file), new_prefix=new_prefix, old_prefix=old_prefix)
+            write(path=file, bytes=content.encode("utf-8"))
         case ".css":
             from . import css
             css.parse(bytes=read(file), new_prefix=new_prefix, old_prefix=old_prefix)
@@ -50,3 +52,4 @@ def tree(path: Path, new_prefix: str, old_prefix: str) -> None:
             tree(path=child, new_prefix=new_prefix, old_prefix=old_prefix)
     else:
         raise exceptions.ShallNeverHappen(f"Path {path} is neither a file nor a directory.")
+

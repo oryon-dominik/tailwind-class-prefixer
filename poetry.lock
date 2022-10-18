@@ -30,6 +30,21 @@ docs = ["sphinx-notfound-page", "zope-interface", "sphinx", "furo"]
 dev = ["cloudpickle", "pre-commit", "sphinx-notfound-page", "sphinx", "furo", "zope-interface", "pytest-mypy-plugins", "mypy (>=0.900,!=0.940)", "pytest (>=4.3.0)", "pympler", "hypothesis", "coverage[toml] (>=5.0.2)"]
 
 [[package]]
+name = "beautifulsoup4"
+version = "4.11.1"
+description = "Screen-scraping library"
+category = "main"
+optional = false
+python-versions = ">=3.6.0"
+
+[package.dependencies]
+soupsieve = ">1.2"
+
+[package.extras]
+html5lib = ["html5lib"]
+lxml = ["lxml"]
+
+[[package]]
 name = "certifi"
 version = "2022.9.24"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -128,6 +143,20 @@ description = "iniconfig: brain-dead simple config-ini parsing"
 category = "dev"
 optional = false
 python-versions = "*"
+
+[[package]]
+name = "lxml"
+version = "4.9.1"
+description = "Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API."
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, != 3.4.*"
+
+[package.extras]
+source = ["Cython (>=0.29.7)"]
+htmlsoup = ["beautifulsoup4"]
+html5 = ["html5lib"]
+cssselect = ["cssselect (>=0.7)"]
 
 [[package]]
 name = "packaging"
@@ -260,6 +289,14 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "soupsieve"
+version = "2.3.2.post1"
+description = "A modern CSS selector implementation for Beautiful Soup."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[[package]]
 name = "toml"
 version = "0.10.2"
 description = "Python Library for Tom's Obvious, Minimal Language"
@@ -295,7 +332,7 @@ all = ["rich (>=10.11.0,<13.0.0)", "shellingham (>=1.3.0,<2.0.0)", "colorama (>=
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "e5d49b69b898184d5759652a758395f40fff5d914afc7608f996919ef95987c5"
+content-hash = "723a224694010bd85ec61cd3904cc1678a7088b9df435bf986f63c05dde5ba26"
 
 [metadata.files]
 anyio = [
@@ -303,6 +340,10 @@ anyio = [
     {file = "anyio-3.6.1.tar.gz", hash = "sha256:413adf95f93886e442aea925f3ee43baa5a765a64a0f52c6081894f9992fdd0b"},
 ]
 attrs = []
+beautifulsoup4 = [
+    {file = "beautifulsoup4-4.11.1-py3-none-any.whl", hash = "sha256:58d5c3d29f5a36ffeb94f02f0d786cd53014cf9b3b3951d42e0080d8a9498d30"},
+    {file = "beautifulsoup4-4.11.1.tar.gz", hash = "sha256:ad9aa55b65ef2808eb405f46cf74df7fcb7044d5cbc26487f96eb2ef2e436693"},
+]
 certifi = []
 click = []
 colorama = []
@@ -327,6 +368,7 @@ iniconfig = [
     {file = "iniconfig-1.1.1-py2.py3-none-any.whl", hash = "sha256:011e24c64b7f47f6ebd835bb12a743f2fbe9a26d4cecaa7f53bc4f35ee9da8b3"},
     {file = "iniconfig-1.1.1.tar.gz", hash = "sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32"},
 ]
+lxml = []
 packaging = [
     {file = "packaging-21.3-py3-none-any.whl", hash = "sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522"},
     {file = "packaging-21.3.tar.gz", hash = "sha256:dd47c42927d89ab911e606518907cc2d3a1f38bbd026385970643f9c5b8ecfeb"},
@@ -358,6 +400,10 @@ rfc3986 = [
 ]
 rich = []
 sniffio = []
+soupsieve = [
+    {file = "soupsieve-2.3.2.post1-py3-none-any.whl", hash = "sha256:3b2503d3c7084a42b1ebd08116e5f81aadfaea95863628c80a3b774a11b7c759"},
+    {file = "soupsieve-2.3.2.post1.tar.gz", hash = "sha256:fc53893b3da2c33de295667a0e19f078c14bf86544af307354de5fcf12a3f30d"},
+]
 toml = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
     {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},

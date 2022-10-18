@@ -2,37 +2,44 @@ import logging
 import io
 import re
 
-from .tailwind import get_tailwind_classes_list
+from bs4 import BeautifulSoup
+
+from . import tailwind
+
 
 log = logging.getLogger("application")
 
-def parse(bytes: io.BytesIO, new_prefix: str, old_prefix: str):
-    classes = get_tailwind_classes_list()
-    template = bytes.getvalue().decode("utf-8")
-    # TODO: implement replacing the new prefix with the old prefix or adding the prefix to all classes
-    
-    # from rich import print
-    
-    # for tw_class in classes:
-        
-        
-        # find matches inside the class or :class pattern
-        
-        # TODO: -> :class
-        # current_classes = re.findall(r"(?<=class=\")([^\"]+)", template)
-        # for _klass in current_classes:
-            # if tw_class in _klass:
-                # matches = re.findall(fr"({old_prefix}{tw_class}).*", _klass)
-                # print(f'>>> DEBUG: {matches}')
-                # old_name = fr"({old_prefix}{tw_class}"
-                # new_name = f"{new_prefix}{old_name.lstrip(old_prefix)}"
-                
-                # print(f'>>> DEBUG: {tw_class=} {_klass=} {old_name=} {new_name=}')
-                
-                # _klass
-                # res = re.sub(f'{_klass}', f'{new_name}', current_classes[0])
-                # print(res)
 
-    
-    # print(f'{template}')
-    # TODO: write template
+def parse(bytes: io.BytesIO, new_prefix: str, old_prefix: str):
+    """
+    Replace the old prefix or add a prefix to all classes eligible.
+    An eligible class is every prefixed or unprefixed tailwind class.
+    """
+    prefixes = tailwind.prefixes(prefix=old_prefix)
+    template = bytes.getvalue().decode("utf-8")
+    soup = BeautifulSoup(template, "html.parser")
+
+    classes = []
+    for match in re.findall(r"(?<=class=\")([^\"]+)", template):
+        classes.extend(match.split())
+
+    matches = []
+    for prefix in prefixes:
+        matches.extend([c for c in classes if c.startswith(prefix)])
+
+    for klass in matches:
+        # normal classes like 'class'
+        for tag in soup.find_all(True):
+            if tag.has_attr('class') and [c for c in tag['class'] if klass in c]:
+                classes = [c for c in tag['class'] if not c.startswith(klass)]
+                tag['class'] = sorted(classes + [f"{new_prefix}{klass.lstrip(old_prefix)}"])
+
+        # colon classes like ':class'
+        # HACK: getting the colon classes of the disjunct from all - :class es that are empty (non-existing)
+        colon_classes = list(set(list(soup.find_all())) - set(list(soup.find_all(attrs={":class": ''}))))
+        for tag in colon_classes:
+            if klass in tag.attrs[':class']:
+                classes = [c for c in tag.attrs[':class'].split() if not c.startswith(klass)]
+                tag.attrs[':class'] = ' '.join(sorted(classes + [f"{new_prefix}{klass.lstrip(old_prefix)}"]))
+
+    return soup.prettify(formatter="html5")

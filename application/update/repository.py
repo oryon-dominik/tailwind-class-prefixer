@@ -26,10 +26,10 @@ def scrape():
         log.error(f"Error response {exc.response.status_code} while requesting {exc.request.url!r}.")
         return
 
-    classes = get_classes_from_source(r.content.decode("utf-8"))
+    classes = classes_from_source(r.content.decode("utf-8"))
     return json.write_json_to_file(path=settings.TAILWIND_CLASSES_JSON_PATH, content=classes)
 
-def get_classes_from_source(file_content: str) -> list:
+def classes_from_source(file_content: str) -> list:
     """
     Parse the tailwind classes from the source content.
 
