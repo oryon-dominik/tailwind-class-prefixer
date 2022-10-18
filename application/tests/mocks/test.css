@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .bg-red-300 {
+    @apply rounded-b-lg shadow-md;
+  }
+  .bg-yellow-300 {
+    @apply border border-gray-300 rounded;
+  }
+  /* ... */
+}

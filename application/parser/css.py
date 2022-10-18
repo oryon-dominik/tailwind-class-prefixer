@@ -1,18 +1,27 @@
 import logging
 import io
+import re
 
-from .tailwind import get_tailwind_classes_list
+from bs4 import BeautifulSoup
+
+from . import tailwind
+
 
 log = logging.getLogger("application")
 
-def parse(bytes: io.BytesIO, new_prefix: str, old_prefix: str):
-    classes = get_tailwind_classes_list()
+
+def parse(bytes: io.BytesIO, new_prefix: str, old_prefix: str) -> str:
+    """
+    Replace the old prefix or add a prefix to all classes eligible.
+    An eligible class is every prefixed or unprefixed tailwind class.
+    """
+    prefixes = tailwind.prefixes(prefix=old_prefix)
     template = bytes.getvalue().decode("utf-8")
-    # TODO: implement replacing the new prefix with the old prefix or adding the prefix to all classes
-    for _class in classes:
-        old_name = f"{old_prefix}{_class}"
-        new_name = f"{new_prefix}{old_name.lstrip(old_prefix)}"
-        # TODO: handle the apply case that occurs in css files..
-        # - replace these with        
-        # re.sub(old_name, new_name)
-        
+
+    for prefix in prefixes:
+        dot_new = f".{new_prefix}{prefix.lstrip(old_prefix)}"
+        template = re.sub(fr"\.{prefix}", dot_new, template)
+        space_new = f" {new_prefix}{prefix.lstrip(old_prefix)}"
+        template = re.sub(fr"\s{prefix}", space_new, template)
+
+    return template

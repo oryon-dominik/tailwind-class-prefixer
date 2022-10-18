@@ -10,7 +10,7 @@ from . import tailwind
 log = logging.getLogger("application")
 
 
-def parse(bytes: io.BytesIO, new_prefix: str, old_prefix: str):
+def parse(bytes: io.BytesIO, new_prefix: str, old_prefix: str) -> str:
     """
     Replace the old prefix or add a prefix to all classes eligible.
     An eligible class is every prefixed or unprefixed tailwind class.
