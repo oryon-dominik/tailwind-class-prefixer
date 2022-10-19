@@ -29,12 +29,11 @@ def parse(bytes: io.BytesIO, new_prefix: str, old_prefix: str) -> str:
         # normal classes like 'class'
         for tag in soup.find_all(True):
             css_classes = tag.get('class', [])
-            if css_classes:
+            if css_classes and [c for c in css_classes if klass in c]:
                 assert tag.has_attr('class'), "Tag has no class attribute?! This should not happen."
-                if [c for c in css_classes if klass in c]:
-                    non_used = [c for c in css_classes if c != klass]
-                    replacement = tailwind.build_replacement(old_prefix=old_prefix, new_prefix=new_prefix, klass=klass)
-                    tag['class'] = list(set(sorted(non_used + [replacement])))
+                non_used = [c for c in css_classes if c != klass]
+                replacement = tailwind.build_replacement(old_prefix=old_prefix, new_prefix=new_prefix, klass=klass)
+                tag['class'] = list(set(sorted(non_used + [replacement])))
 
         # colon classes like ':class'
         # HACK: getting the colon classes of the disjunct from all - :class es that are empty (non-existing)

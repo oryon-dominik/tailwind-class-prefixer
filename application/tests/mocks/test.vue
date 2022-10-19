@@ -3,10 +3,10 @@
  <div class="bar foo">
   bla
  </div>
- <div :class="buz testing-bg-green-3 fuz testing-backdrop-contrast-3">
+ <div :class="fuz tw-bg-green-3 buz tw-backdrop-contrast-3">
   baz
  </div>
- <div :class="testing-bg-teal-3 bum">
+ <div :class="tw-bg-teal-3 bum">
   bum
  </div>
  <div blubb="bummvumm">

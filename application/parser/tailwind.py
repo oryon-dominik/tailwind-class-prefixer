@@ -18,6 +18,9 @@ def build_replacement(old_prefix: str, new_prefix: str, klass: str) -> str:
         # special case: if the class is a media query, we need to keep the media query
         media_query, name = klass.split(':')
         return f"{media_query}:{new_prefix}{name.removeprefix(old_prefix)}"
+    elif '{' in klass and '}' in klass:
+        class_binding = klass.split(':')[0].removeprefix('{').strip()
+        return f"{new_prefix}{class_binding.removeprefix(old_prefix)}"
     return f"{new_prefix}{klass.removeprefix(old_prefix)}" 
 
 

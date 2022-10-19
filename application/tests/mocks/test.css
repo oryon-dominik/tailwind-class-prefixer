@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 @layer components {
-  .testing-bg-red-300 {
-    @apply testing-rounded-b-lg testing-shadow-md;
+  .tw-bg-red-300 {
+    @apply tw-rounded-b-lg tw-shadow-md;
   }
-  .testing-bg-yellow-300 {
-    @apply border testing-order-gray-300 rounded;
+  .tw-bg-yellow-300 {
+    @apply border tw-order-gray-300 rounded;
   }
   /* ... */
 }
