@@ -13,6 +13,49 @@ from .. import exceptions
 log = logging.getLogger("application")
 
 
+def build_replacement(old_prefix: str, new_prefix: str, klass: str) -> str:
+    if ':' in klass:
+        # special case: if the class is a media query, we need to keep the media query
+        media_query, name = klass.split(':')
+        return f"{media_query}:{new_prefix}{name.removeprefix(old_prefix)}"
+    return f"{new_prefix}{klass.removeprefix(old_prefix)}" 
+
+
+def match_classes(classes: list, prefixes: list) -> list:
+    matches = []
+    for prefix in prefixes:
+        pure_classes = [c for c in classes if ':' not in c]
+        pure_classes = [c for c in pure_classes if c.startswith(prefix)]
+        matches.extend(pure_classes)
+        media_query_classes = [c for c in classes if ':' in c]
+        media_query_classes = [c for c in media_query_classes if c.split(':')[1].startswith(prefix)]
+        matches.extend(media_query_classes)
+    return list(set(matches))
+
+def join_classbindings(classes: list) -> list:
+    """Join all previously split classbindings into a single str."""
+    bind = False
+    cleaned = []
+    classbindings = []
+
+    # differentiate between classbindings and normal classes
+    for klass in classes:
+        if klass == "{":
+            bind = True
+        if klass == "}":
+            classbindings.append(klass)
+            cleaned.append(" ".join(classbindings))
+            bind = False
+            continue
+
+        if bind:
+            classbindings.append(klass)
+        elif bind is False:
+            cleaned.append(klass)
+
+    return cleaned
+
+
 def prefixes(prefix=str) -> list:
     """
     Return a list of all class-prefix combinations:
@@ -25,6 +68,7 @@ def prefixes(prefix=str) -> list:
         for prefix in list(set([prefix, ""]))
         for klass in [f"{c}-" for c in classes()]
     ]
+
 
 def classes() -> list:
     """Read the list of all tailwind classes from json."""
@@ -59,7 +103,8 @@ def parse(path: Path, prefix: str) -> str:
     else:
         log.info(f"Adding prefix {prefix} to tailwind.config.js..")
         lines = content.splitlines()
-        lines.insert(1, f"  prefix: {semicolon}{prefix}{semicolon},")
+        if not any([f"prefix:" in l for l in lines]):
+            lines.insert(1, f"  prefix: {semicolon}{prefix}{semicolon},")
         new_content = "\n".join(lines)
 
     write(path=path, bytes=new_content.encode('utf-8'))

@@ -1,5 +1,5 @@
 module.exports = {
-  prefix: 'tw-',
+  prefix: 'testing-',
   darkMode: false, // or 'media' or 'class'
   plugins: [],
 }

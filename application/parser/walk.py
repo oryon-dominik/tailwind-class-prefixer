@@ -1,9 +1,12 @@
-from pathlib import Path
 import logging
+
+from pathlib import Path
 
 from ..config import settings
 from ..inout import read, write
 from .. import exceptions
+
+from .prefix import validate
 
 
 log = logging.getLogger("application")
@@ -30,6 +33,7 @@ def parse_file(file: Path, new_prefix: str, old_prefix: str) -> None:
 def search(path: Path, prefix: str, old_prefix="") -> None:
     """Search for tailwind config and parse all files."""
     # find the tailwind-config, update to new prefix and save the old prefix first
+    prefix = validate(prefix=prefix)
     for _path in path.glob("**/tailwind.config.js"):
         from . import tailwind
         old_prefix = tailwind.parse(path=_path, prefix=prefix)
