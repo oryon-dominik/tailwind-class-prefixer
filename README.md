@@ -1,5 +1,7 @@
 # tailwind class prefixer
 
+Install: `poetry install`. (Obviously requires [poetry](https://python-poetry.org/))
+
     Usage: python prefixer.py [OPTIONS] COMMAND [ARGS]...
 
     ╭─ Options ──────────────────────────────────────────────────────────────────────────────────────╮
