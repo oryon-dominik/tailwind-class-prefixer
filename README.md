@@ -1,4 +1,4 @@
-# auto prefix tailwind classes
+# tailwind class prefixer
 
     Usage: python prefixer.py [OPTIONS] COMMAND [ARGS]...
 
