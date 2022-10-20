@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 @layer components {
-  .tw-bg-red-300 {
-    @apply tw-rounded-b-lg tw-shadow-md;
+  .bg-red-300 {
+    @apply rounded-b-lg shadow-md;
   }
-  .tw-bg-yellow-300 {
-    @apply border tw-order-gray-300 rounded;
+  .bg-yellow-300 {
+    @apply border rounded order-gray-300;
   }
   /* ... */
 }

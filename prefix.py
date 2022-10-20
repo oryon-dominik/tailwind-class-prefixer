@@ -38,6 +38,7 @@ def prefix(
             settings.TAILWIND_DEFAULT_PREFIX,
             help="Change the prefix for tailwind classes.",
         ),
+        remove: Optional[bool] = typer.Option(False, "--remove", '-r', help="Remove the prefix."),
     ):
     """Process an existing project."""
     if path is None or not path.exists():
@@ -45,7 +46,7 @@ def prefix(
         raise typer.Exit()
 
     from application.parser import walk
-    walk.search(path=path, prefix=prefix)
+    walk.search(path=path, prefix=prefix, remove=remove)
 
 
 @cli.callback()

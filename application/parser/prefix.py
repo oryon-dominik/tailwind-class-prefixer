@@ -1,13 +1,20 @@
+import logging
+
 from .. import exceptions
 
-def validate(prefix: str):
+
+log = logging.getLogger("application")
+
+
+def validate(prefix: str, remove: bool):
     """
     Validate the prefix and auto-fix common issues.
     - checks for invalid characters
     - adds a dash if missing
     - returns all lowercase
     """
-    if prefix == "*empty*":  # empty prefix is allowed explicitly
+    if remove:  # empty prefix is allowed explicitly
+        log.info(f"Removing the prefix.")
         return ""
     if prefix is None:
         raise exceptions.InvalidPrefix(f"Prefix {prefix} is not valid.")

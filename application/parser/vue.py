@@ -41,10 +41,15 @@ def parse(bytes: io.BytesIO, new_prefix: str, old_prefix: str) -> str:
         for tag in colon_classes:
             if klass in tag.attrs[':class']:
                 css_classes = tag.attrs[':class'].split()
-                # print(f'>>> DEBUG: {css_classes=} {tag=}')
-                non_used = [c for c in css_classes if c != klass]
-                # special case: if the class is a media query, we need to keep the media query
-                replacement = tailwind.build_replacement(old_prefix=old_prefix, new_prefix=new_prefix, klass=klass)
+                css_classes = tailwind.join_classbindings(classes=css_classes)
+                non_used = [c for c in css_classes if c != klass and not (tailwind.is_classbinding(c) and klass in c)]
+                
+                # handle classbindings differently
+                _klass = klass
+                class_bindings = [c for c in css_classes if tailwind.is_classbinding(c) and klass in c]
+                if class_bindings:
+                    _klass = class_bindings[0]
+                replacement = tailwind.build_replacement(old_prefix=old_prefix, new_prefix=new_prefix, klass=_klass)
                 tag.attrs[':class'] = ' '.join(list(set(sorted(non_used + [replacement]))))
 
     return soup.prettify(formatter="html5")

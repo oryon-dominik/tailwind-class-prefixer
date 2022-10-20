@@ -30,10 +30,10 @@ def parse_file(file: Path, new_prefix: str, old_prefix: str) -> None:
             raise NotImplementedError(f"File {file} has an not implemented file extension.")
 
 
-def search(path: Path, prefix: str, old_prefix="") -> None:
+def search(path: Path, prefix: str, old_prefix="", remove=False) -> None:
     """Search for tailwind config and parse all files."""
     # find the tailwind-config, update to new prefix and save the old prefix first
-    prefix = validate(prefix=prefix)
+    prefix = validate(prefix=prefix, remove=remove)
     for _path in path.glob("**/tailwind.config.js"):
         from . import tailwind
         old_prefix = tailwind.parse(path=_path, prefix=prefix)

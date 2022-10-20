@@ -13,27 +13,47 @@ from .. import exceptions
 log = logging.getLogger("application")
 
 
+def is_classbinding(klass: str) -> bool:
+    """Assume a stripped class is a classbinding if braces are found around it."""
+    klass = klass.strip()
+    return klass.startswith('{') and klass.endswith('}')
+
+
 def build_replacement(old_prefix: str, new_prefix: str, klass: str) -> str:
-    if ':' in klass:
+    """
+    Return a replacement string for the tailwind class used.
+    Including class bindings ':class'.
+    """
+    if is_classbinding(klass):
+        # special case: if the class is a classbinding, keep the class intact
+        class_binding = klass.split(':')[0].removeprefix('{').strip()
+        replacement = f"{new_prefix}{class_binding.removeprefix(old_prefix)}"
+        return klass.replace(class_binding, replacement)
+    elif ':' in klass:
         # special case: if the class is a media query, we need to keep the media query
         media_query, name = klass.split(':')
         return f"{media_query}:{new_prefix}{name.removeprefix(old_prefix)}"
-    elif '{' in klass and '}' in klass:
-        class_binding = klass.split(':')[0].removeprefix('{').strip()
-        return f"{new_prefix}{class_binding.removeprefix(old_prefix)}"
     return f"{new_prefix}{klass.removeprefix(old_prefix)}" 
 
 
 def match_classes(classes: list, prefixes: list) -> list:
     matches = []
     for prefix in prefixes:
+        # normal classes
         pure_classes = [c for c in classes if ':' not in c]
         pure_classes = [c for c in pure_classes if c.startswith(prefix)]
         matches.extend(pure_classes)
+        # media queries
         media_query_classes = [c for c in classes if ':' in c]
         media_query_classes = [c for c in media_query_classes if c.split(':')[1].startswith(prefix)]
         matches.extend(media_query_classes)
+        # classbindings
+        classbinding_classes = [c for c in classes if '{' in c and '}' in c]
+        classbinding_classes = [c.split(':')[0].removeprefix('{').strip() for c in classbinding_classes]
+        classbinding_classes = [c for c in classbinding_classes if c.startswith(prefix)]
+        matches.extend(classbinding_classes)
     return list(set(matches))
+
 
 def join_classbindings(classes: list) -> list:
     """Join all previously split classbindings into a single str."""
@@ -49,6 +69,7 @@ def join_classbindings(classes: list) -> list:
             classbindings.append(klass)
             cleaned.append(" ".join(classbindings))
             bind = False
+            classbindings = []
             continue
 
         if bind:
@@ -91,20 +112,27 @@ def semicolon_style(content: str) -> str:
 
 
 def parse(path: Path, prefix: str) -> str:
+    """
+    Parse the tailwind.config.js and replace all tailwind classes with the given prefix.
+    """
+    assert path.name == settings.TAILWIND_CONFIG_FILENAME, f"Filename {path.name} is not {settings.TAILWIND_CONFIG_FILENAME}."
     _bytes: io.BytesIO = read(path)
     content = _bytes.getvalue().decode("utf-8")
 
+    has_prefix: bool = "prefix:" in content
     semicolon = semicolon_style(content)
 
-    old_prefix = ''.join(r[0] for r in findall("prefix: {},\n", content)).strip(semicolon)
-    if old_prefix and prefix != old_prefix:
-        log.info(f"Found old prefix: {old_prefix} - replacing..")
+    prefixes = findall("prefix: {},\n", content)
+    old_prefix = ''.join(r[0] for r in prefixes).strip(semicolon)
+
+    if has_prefix and prefix != old_prefix:
+        log.info(f"Found old prefix: '{old_prefix}' - replacing with '{prefix}'..")
         new_content = re.sub(f"prefix: {semicolon}{old_prefix}{semicolon}", f"prefix: {semicolon}{prefix}{semicolon}", content)
     elif prefix == old_prefix:
-        log.info(f"The old prefix is already: {old_prefix}, skipping..")
+        log.info(f"The old prefix is already: '{old_prefix}', skipping..")
         return old_prefix
     else:
-        log.info(f"Adding prefix {prefix} to tailwind.config.js..")
+        log.info(f"Adding prefix '{prefix}' to tailwind.config.js..")
         lines = content.splitlines()
         if not any([f"prefix:" in l for l in lines]):
             lines.insert(1, f"  prefix: {semicolon}{prefix}{semicolon},")
