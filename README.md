@@ -1,6 +1,6 @@
 # auto prefix tailwind classes
 
-    Usage: tailwind-class-prefixer [OPTIONS] COMMAND [ARGS]...
+    Usage: python prefixer.py [OPTIONS] COMMAND [ARGS]...
 
     ╭─ Options ──────────────────────────────────────────────────────────────────────────────────────╮
     │ --version             -v                              Show the application's version and exit. │
