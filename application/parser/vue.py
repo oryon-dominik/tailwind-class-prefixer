@@ -17,7 +17,7 @@ def parse(bytes: io.BytesIO, new_prefix: str, old_prefix: str) -> str:
     """
     prefixes = tailwind.prefixes(prefix=old_prefix)
     template = bytes.getvalue().decode("utf-8")
-    soup = BeautifulSoup(template, "html.parser")
+    soup = BeautifulSoup(template, "html5lib")
 
     classes = []
     for match in re.findall(r"(?<=class=\")([^\"]+)", template):
@@ -52,4 +52,4 @@ def parse(bytes: io.BytesIO, new_prefix: str, old_prefix: str) -> str:
                 replacement = tailwind.build_replacement(old_prefix=old_prefix, new_prefix=new_prefix, klass=_klass)
                 tag.attrs[':class'] = ' '.join(list(set(sorted(non_used + [replacement]))))
 
-    return soup.prettify(formatter="html5")
+    return str(soup)  # .prettify(formatter="html5")  // prettify destroys several vue js layout decisions
