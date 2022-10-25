@@ -26,7 +26,7 @@ def match_regex(match: re.Match) -> str:
     classes = parse_official.parse(format='class:"{}"', string=match.group())[0].split()
     matches = tailwind.match_classes(classes=classes, prefixes=prefixes)
     replaced = [
-        tailwind.build_replacement(old_prefix=prefix.old, new_prefix=prefix.new, klass=klass)
+        tailwind.build_replacement(prefix=prefix, klass=klass)
         if klass in matches else klass
         for klass in classes
     ]
@@ -37,6 +37,8 @@ def parse(bytes: io.BytesIO, prefix: Prefix) -> str:
     """
     Replace the old prefix or add a prefix to all classes eligible.
     An eligible class is every prefixed or unprefixed tailwind class.
+    
+    Probably makes most sense in post build javascript files.
     """
     get_or_set_cached_prefix(prefix=prefix)
     template = bytes.getvalue().decode("utf-8")
