@@ -41,7 +41,7 @@ class Settings:
     LOG_LEVEL = logs.LOG_LEVEL
 
     TAILWIND_DEFAULT_PREFIX = "tw-"
-    ALLOWED_FILE_EXTENSIONS = [".vue", ".css", ".js"]
+    ALLOWED_FILE_EXTENSIONS = [".vue", ".css", ".js", ".html"]
     IGNORE_DIRECTORIES = [".git", "__pycache__", "node_modules", "dist", "build", "public", "static"]
 
     TAILWIND_CLASSES_SRC_URLS = [

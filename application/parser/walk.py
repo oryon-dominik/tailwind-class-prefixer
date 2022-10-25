@@ -30,6 +30,10 @@ def parse_file(file: Path, prefix: Prefix) -> None:
             from . import js
             content: str = js.parse(bytes=read(file), prefix=prefix)
             write(path=file, bytes=content.encode("utf-8"))
+        case ".html":
+            from . import html
+            content: str = html.parse(bytes=read(file), prefix=prefix)
+            write(path=file, bytes=content.encode("utf-8"))
         case _:
             raise NotImplementedError(f"File {file} has an not implemented file extension.")
 
