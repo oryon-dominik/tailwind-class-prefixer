@@ -16,6 +16,14 @@ class Prefix:
     new: str
 
 
+def cache(prefix: Prefix | None = None, prefix_cache={}):
+    if prefix is not None:
+        prefix_cache["prefix"] = prefix
+    cached = prefix_cache.get("prefix")
+    assert cached is not None, "Prefix not set"
+    return cached
+
+
 def validate(prefix: str, remove: bool):
     """
     Validate the prefix and auto-fix common issues.
