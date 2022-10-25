@@ -19,14 +19,14 @@ GLOBALS = {
 def match_regex(match: re.Match, old_prefix: str = GLOBALS["old_prefix"], new_prefix: str = GLOBALS["new_prefix"]) -> str:
     """Replace the old prefix or add a prefix to all classes eligible."""
     prefixes = tailwind.prefixes(prefix=old_prefix)
-    classes = parse_official.parse(format='class:"{}"', string=match.group().removeprefix('{'))[0].split()
+    classes = parse_official.parse(format='class:"{}"', string=match.group())[0].split()
     matches = tailwind.match_classes(classes=classes, prefixes=prefixes)
     replaced = [
         tailwind.build_replacement(old_prefix=old_prefix, new_prefix=new_prefix, klass=klass)
         if klass in matches else klass
         for klass in classes
     ]
-    return '{class:"' + ' '.join(replaced) + '"'
+    return 'class:"' + ' '.join(replaced) + '"'
 
 
 def parse(bytes: io.BytesIO, new_prefix: str, old_prefix: str) -> str:
@@ -37,7 +37,7 @@ def parse(bytes: io.BytesIO, new_prefix: str, old_prefix: str) -> str:
     
     template = bytes.getvalue().decode("utf-8")
 
-    regex = re.compile(r"\{class\:\"([^\"]+)\"", re.S)
+    regex = re.compile(r"class\:\"([^\"]+)\"", re.S)
 
     GLOBALS["old_prefix"] = old_prefix
     GLOBALS["new_prefix"] = new_prefix
