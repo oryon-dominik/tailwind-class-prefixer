@@ -47,6 +47,7 @@ def prefix(
 
     from application.parser import walk
     walk.search(path=path, prefix=prefix, remove=remove)
+    log.info(f"Prefixed '{path.name}' with '{prefix}'")
 
 
 @cli.callback()
