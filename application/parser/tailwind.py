@@ -8,6 +8,7 @@ from parse import findall
 from ..config import settings
 from ..inout import read, write, json
 from .. import exceptions
+from .prefix import Prefix
 
 
 log = logging.getLogger("application")
@@ -19,7 +20,7 @@ def is_classbinding(klass: str) -> bool:
     return klass.startswith('{') and klass.endswith('}')
 
 
-def build_replacement(old_prefix: str, new_prefix: str, klass: str) -> str:
+def build_replacement(prefix: Prefix, klass: str) -> str:
     """
     Return a replacement string for the tailwind class used.
     Including class bindings ':class'.
@@ -27,13 +28,13 @@ def build_replacement(old_prefix: str, new_prefix: str, klass: str) -> str:
     if is_classbinding(klass):
         # special case: if the class is a classbinding, keep the class intact
         class_binding = klass.split(':')[0].removeprefix('{').strip()
-        replacement = f"{new_prefix}{class_binding.removeprefix(old_prefix)}"
+        replacement = f"{prefix.new}{class_binding.removeprefix(prefix.old)}"
         return klass.replace(class_binding, replacement)
     elif ':' in klass:
         # special case: if the class is a media query, we need to keep the media query
         media_query, name = klass.split(':')
-        return f"{media_query}:{new_prefix}{name.removeprefix(old_prefix)}"
-    return f"{new_prefix}{klass.removeprefix(old_prefix)}" 
+        return f"{media_query}:{prefix.new}{name.removeprefix(prefix.old)}"
+    return f"{prefix.new}{klass.removeprefix(prefix.old)}" 
 
 
 def match_classes(classes: list, prefixes: list) -> list:
@@ -129,13 +130,13 @@ def parse(path: Path, prefix: str) -> str:
         log.info(f"Found old prefix: '{old_prefix}' - replacing with '{prefix}'..")
         new_content = re.sub(f"prefix: {semicolon}{old_prefix}{semicolon}", f"prefix: {semicolon}{prefix}{semicolon}", content)
     elif prefix == old_prefix:
-        log.info(f"The old prefix is already: '{old_prefix}', skipping..")
         return old_prefix
     else:
         log.info(f"Adding prefix '{prefix}' to tailwind.config.js..")
         lines = content.splitlines()
         if not any([f"prefix:" in l for l in lines]):
-            lines.insert(1, f"  prefix: {semicolon}{prefix}{semicolon},")
+            module = lines.index("module.exports = {")
+            lines.insert(module + 1, f"  prefix: {semicolon}{prefix}{semicolon},")
         new_content = "\n".join(lines)
 
     write(path=path, bytes=new_content.encode('utf-8'))

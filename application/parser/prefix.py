@@ -1,9 +1,19 @@
 import logging
 
+from dataclasses import dataclass
+
+
 from .. import exceptions
 
 
 log = logging.getLogger("application")
+
+
+@dataclass
+class Prefix:
+    """Keep track of the prefixes."""
+    old: str
+    new: str
 
 
 def validate(prefix: str, remove: bool):

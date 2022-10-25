@@ -6,13 +6,13 @@ from ..config import settings
 from ..inout import read, write
 from .. import exceptions
 
-from .prefix import validate
+from .prefix import validate, Prefix
 
 
 log = logging.getLogger("application")
 
 
-def parse_file(file: Path, new_prefix: str, old_prefix: str) -> None:
+def parse_file(file: Path, prefix: Prefix) -> None:
     """Parse a file for tailwind classes."""
     if not file.is_file():
         raise exceptions.ShallNeverHappen(f"Path {file} is not a file.")
@@ -20,15 +20,15 @@ def parse_file(file: Path, new_prefix: str, old_prefix: str) -> None:
     match file.suffix:
         case ".vue":
             from . import vue
-            content: str = vue.parse(bytes=read(file), new_prefix=new_prefix, old_prefix=old_prefix)
+            content: str = vue.parse(bytes=read(file), prefix=prefix)
             write(path=file, bytes=content.encode("utf-8"))
         case ".css":
             from . import css
-            content: str = css.parse(bytes=read(file), new_prefix=new_prefix, old_prefix=old_prefix)
+            content: str = css.parse(bytes=read(file), prefix=prefix)
             write(path=file, bytes=content.encode("utf-8"))
         case ".js":
             from . import js
-            content: str = js.parse(bytes=read(file), new_prefix=new_prefix, old_prefix=old_prefix)
+            content: str = js.parse(bytes=read(file), prefix=prefix)
             write(path=file, bytes=content.encode("utf-8"))
         case _:
             raise NotImplementedError(f"File {file} has an not implemented file extension.")
@@ -43,10 +43,10 @@ def search(path: Path, prefix: str, old_prefix="", remove=False) -> None:
         old_prefix = tailwind.parse(path=_path, prefix=prefix)
         break  # only the first (root) config file is allowed
     # walk the tree, replace the old prefix with the new one or add the prefix
-    tree(path=path, new_prefix=prefix, old_prefix=old_prefix)
+    tree(path=path, prefix=Prefix(old=old_prefix, new=prefix))
 
 
-def tree(path: Path, new_prefix: str, old_prefix: str) -> None:
+def tree(path: Path, prefix: Prefix) -> None:
     """Walk a directory tree (if not ignored) and parse all files if in allowed extensions."""
     if path.is_dir() and path.name in settings.IGNORE_DIRECTORIES:
         # skip
@@ -55,10 +55,10 @@ def tree(path: Path, new_prefix: str, old_prefix: str) -> None:
         # skip
         pass
     elif path.is_file() and path.suffix in settings.ALLOWED_FILE_EXTENSIONS:
-        parse_file(file=path, new_prefix=new_prefix, old_prefix=old_prefix)
+        parse_file(file=path, prefix=prefix)
     elif path.is_dir() and path.name not in settings.IGNORE_DIRECTORIES:
         for child in path.iterdir():
-            tree(path=child, new_prefix=new_prefix, old_prefix=old_prefix)
+            tree(path=child, prefix=prefix)
     else:
         raise exceptions.ShallNeverHappen(f"Path {path} is neither a file nor a directory.")
 

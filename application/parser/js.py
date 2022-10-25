@@ -2,48 +2,43 @@ import logging
 import io
 import re
 
+
 import parse as parse_official
 
 from . import tailwind
-
+from .prefix import Prefix
 
 log = logging.getLogger("application")
 
-GLOBALS = {
-    "old_prefix": "",
-    "new_prefix": "",
-    "count": 0,
-}
 
 
-def match_regex(match: re.Match, old_prefix: str = GLOBALS["old_prefix"], new_prefix: str = GLOBALS["new_prefix"]) -> str:
+def get_or_set_cached_prefix(prefix: Prefix | None = None, prefix_cache={}):
+    if prefix is not None:
+        prefix_cache["prefix"] = prefix
+    cached = prefix_cache.get("prefix")
+    assert cached is not None, "Prefix not set"
+    return cached
+
+def match_regex(match: re.Match) -> str:
     """Replace the old prefix or add a prefix to all classes eligible."""
-    prefixes = tailwind.prefixes(prefix=old_prefix)
+    prefix = get_or_set_cached_prefix()
+    prefixes = tailwind.prefixes(prefix=prefix.old)
     classes = parse_official.parse(format='class:"{}"', string=match.group())[0].split()
     matches = tailwind.match_classes(classes=classes, prefixes=prefixes)
     replaced = [
-        tailwind.build_replacement(old_prefix=old_prefix, new_prefix=new_prefix, klass=klass)
+        tailwind.build_replacement(old_prefix=prefix.old, new_prefix=prefix.new, klass=klass)
         if klass in matches else klass
         for klass in classes
     ]
     return 'class:"' + ' '.join(replaced) + '"'
 
 
-def parse(bytes: io.BytesIO, new_prefix: str, old_prefix: str) -> str:
+def parse(bytes: io.BytesIO, prefix: Prefix) -> str:
     """
     Replace the old prefix or add a prefix to all classes eligible.
     An eligible class is every prefixed or unprefixed tailwind class.
     """
-    
+    get_or_set_cached_prefix(prefix=prefix)
     template = bytes.getvalue().decode("utf-8")
-
     regex = re.compile(r"class\:\"([^\"]+)\"", re.S)
-
-    GLOBALS["old_prefix"] = old_prefix
-    GLOBALS["new_prefix"] = new_prefix
-
-    template = regex.sub(repl=match_regex, string=template)
-        # print(f'>>> DEBUG: {count=}, {prefix=}, {replacement=}')
-
-    # print(f'>>> DEBUG: {template=}')
-    return template
+    return regex.sub(repl=match_regex, string=template)
