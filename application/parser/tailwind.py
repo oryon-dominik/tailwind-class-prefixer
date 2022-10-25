@@ -20,6 +20,21 @@ def is_classbinding(klass: str) -> bool:
     klass = klass.strip()
     return klass.startswith('{') and klass.endswith('}')
 
+def is_prefix(klass: str, prefix: str) -> bool:
+    """Check if a class is a prefix"""
+    startswith: bool = klass.startswith(prefix)
+    endswith: bool = klass.endswith('-')
+    if startswith and endswith:
+        return True
+    if not startswith:
+        return False
+    if prefix.endswith('-'):
+        return startswith
+    if klass == prefix:
+        return True
+    if not klass.startswith(f"{prefix}-"):
+        return False
+    return startswith
 
 def build_classes(classes: str) -> list:
     """Build a list of all classes from the tailwind.config.js file."""
@@ -60,16 +75,16 @@ def match_classes(classes: list, prefixes: list) -> list:
     for prefix in prefixes:
         # normal classes
         pure_classes = [c for c in classes if ':' not in c]
-        pure_classes = [c for c in pure_classes if c.startswith(prefix)]
+        pure_classes = [c for c in pure_classes if is_prefix(klass=c, prefix=prefix)]
         matches.extend(pure_classes)
         # media queries
         media_query_classes = [c for c in classes if ':' in c]
-        media_query_classes = [c for c in media_query_classes if c.split(':')[1].startswith(prefix)]
+        media_query_classes = [c for c in media_query_classes if is_prefix(klass=c.split(':')[1], prefix=prefix)]
         matches.extend(media_query_classes)
         # classbindings
         classbinding_classes = [c for c in classes if '{' in c and '}' in c]
         classbinding_classes = [c.split(':')[0].removeprefix('{').strip() for c in classbinding_classes]
-        classbinding_classes = [c for c in classbinding_classes if c.startswith(prefix)]
+        classbinding_classes = [c for c in classbinding_classes if is_prefix(klass=c, prefix=prefix)]
         matches.extend(classbinding_classes)
     return list(set(matches))
 
