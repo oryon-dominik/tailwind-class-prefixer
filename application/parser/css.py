@@ -2,8 +2,6 @@ import logging
 import io
 import re
 
-from bs4 import BeautifulSoup
-
 from . import tailwind
 
 

@@ -6,7 +6,6 @@ from bs4 import BeautifulSoup
 
 from . import tailwind
 
-
 log = logging.getLogger("application")
 
 
@@ -52,4 +51,4 @@ def parse(bytes: io.BytesIO, new_prefix: str, old_prefix: str) -> str:
                 replacement = tailwind.build_replacement(old_prefix=old_prefix, new_prefix=new_prefix, klass=_klass)
                 tag.attrs[':class'] = ' '.join(list(set(sorted(non_used + [replacement]))))
 
-    return str(soup)  # .prettify(formatter="html5")  // prettify destroys several vue js layout decisions
+    return soup.prettify(formatter="html5")  # prettify destroys several vue js layout decisions
