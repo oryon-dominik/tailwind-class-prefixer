@@ -1,6 +1,7 @@
 import logging
 import io
 import re
+import string
 from pathlib import Path
 
 from parse import findall
@@ -18,6 +19,23 @@ def is_classbinding(klass: str) -> bool:
     """Assume a stripped class is a classbinding if braces are found around it."""
     klass = klass.strip()
     return klass.startswith('{') and klass.endswith('}')
+
+
+def build_classes(classes: str) -> list:
+    """Build a list of all classes from the tailwind.config.js file."""
+    built = []
+    word = ""
+    for char in classes:
+        if char in list(string.ascii_letters) + list(string.digits) + ['-']:
+            word += char
+        else:
+            if word:
+                built.append(word)
+                word = ""
+            built.append(char)
+    if word:
+        built.append(word)
+    return built
 
 
 def build_replacement(prefix: Prefix, klass: str) -> str:
@@ -88,11 +106,13 @@ def prefixes(prefix=str) -> list:
         - or that are prefixed with the given prefix.
     Also adding the '-' dash to class.
     """
-    return [
+    prefixed = [
         f"{prefix}{klass}"
         for prefix in list(set([prefix, ""]))
-        for klass in [f"{c}-" for c in classes()]
+        for klass in classes()
     ]
+    appended = [f"{c}-" for c in prefixed]
+    return appended + prefixed
 
 
 def classes() -> list:

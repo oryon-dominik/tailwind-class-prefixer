@@ -35,6 +35,6 @@ class Settings:
     ALLOWED_FILE_EXTENSIONS = [".vue", ".css", ".js"]
     IGNORE_DIRECTORIES = [".git", "__pycache__", "node_modules", "dist", "build", "public", "static"]
 
-    TAILWIND_CLASSES_SRC_URL = "https://raw.githubusercontent.com/tailwindlabs/tailwindcss/master/tests/any-type.test.js"
+    TAILWIND_CLASSES_SRC_URL = "https://raw.githubusercontent.com/tailwindlabs/tailwindcss/master/src/corePlugins.js"
     TAILWIND_CLASSES_JSON_PATH = ROOT_DIR / "tailwind-classes" / "tailwind-classes-list.json"
     TAILWIND_CONFIG_FILENAME = "tailwind.config.js"
