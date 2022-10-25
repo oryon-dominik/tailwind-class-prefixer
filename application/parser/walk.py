@@ -29,7 +29,7 @@ def parse_file(file: Path, new_prefix: str, old_prefix: str) -> None:
         case ".js":
             from . import js
             content: str = js.parse(bytes=read(file), new_prefix=new_prefix, old_prefix=old_prefix)
-            # write(path=file, bytes=content.encode("utf-8"))
+            write(path=file, bytes=content.encode("utf-8"))
         case _:
             raise NotImplementedError(f"File {file} has an not implemented file extension.")
 
