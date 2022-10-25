@@ -11,9 +11,6 @@ from . import prefix
 log = logging.getLogger("application")
 
 
-
-
-
 def match_regex(match: re.Match) -> str:
     """Replace the old prefix or add a prefix to all classes eligible."""
     prefix = prefix.cache()
