@@ -2,6 +2,8 @@
 import secrets
 
 from functools import lru_cache
+from dataclasses import dataclass
+from typing import Literal
 
 # order matters!
 from .paths import ROOT_DIR
@@ -16,6 +18,13 @@ def get_settings():
     -> Return the same value that was returned the first time, instead of computing it again.
     """
     return Settings(**{})
+
+
+@dataclass
+class URL:
+    """URL from the offical sources with types to process"""
+    typ: Literal["core", "test"]
+    uri: str  # -> URL type
 
 
 class Settings:
@@ -35,6 +44,9 @@ class Settings:
     ALLOWED_FILE_EXTENSIONS = [".vue", ".css", ".js"]
     IGNORE_DIRECTORIES = [".git", "__pycache__", "node_modules", "dist", "build", "public", "static"]
 
-    TAILWIND_CLASSES_SRC_URL = "https://raw.githubusercontent.com/tailwindlabs/tailwindcss/master/src/corePlugins.js"
+    TAILWIND_CLASSES_SRC_URLS = [
+        URL(typ="core", uri="https://raw.githubusercontent.com/tailwindlabs/tailwindcss/master/src/corePlugins.js"),
+        URL(typ="test", uri="https://raw.githubusercontent.com/tailwindlabs/tailwindcss/master/tests/any-type.test.js"),
+    ]
     TAILWIND_CLASSES_JSON_PATH = ROOT_DIR / "tailwind-classes" / "tailwind-classes-list.json"
     TAILWIND_CONFIG_FILENAME = "tailwind.config.js"
